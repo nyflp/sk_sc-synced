@@ -1,5 +1,5 @@
 on script load:
-	load yaml "plugins/Skript/scripts/synced/09_ranks.yml" as "ranks"
+	load yaml "plugins/Skript/scripts/sk_sc-synced/10_ranks.yml" as "ranks"
 	clear {ranks::*}
 	set {_groups::*} to yaml list "groups" from "ranks"
 	loop {_groups::*}:
@@ -25,7 +25,7 @@ on script load:
 	clear team suffix of team named "z-joueur"
 
 command /setrank [<text>] [<text>]:
-	permission: sys.setrank
+	permission: op
 	permission message: &cVous n'avez pas la permission.
 	trigger:
 		arg-1 is not set:
@@ -51,15 +51,14 @@ function setColor(p: player):
 	if {_rank} is "Admin":
 		set {_t} to team named "a-admin"
 	else if {_rank} is "Staff":
+		remove {_p}'s perms from {_p}'s perms
 		set {_t} to team named "b-staff"
 	else if {_rank} is "Donateur":
+		remove {_p}'s perms from {_p}'s perms
 		set {_t} to team named "y-donateur"
 	else if {_rank} is "Joueur":
+		remove {_p}'s perms from {_p}'s perms
 		set {_t} to team named "z-joueur"
-	remove "skperm.joueur" from {_p}'s perms
-	remove "skperm.donateur" from {_p}'s perms
-	remove "skperm.staff" from {_p}'s perms
-	remove "skperm.admin" from {_p}'s perms
 	loop {ranks::perms::%{_rank}%::*}:
 		add loop-value to {_p}'s perms
 	set {rank::%{_p}'s uuid%} to {_rank}

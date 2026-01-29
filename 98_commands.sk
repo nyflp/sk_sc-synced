@@ -1,4 +1,12 @@
 on tab complete:
+	if event-string contains "/sk" or "/skript":
+		player is op
+		tab arg-1 is "reload":
+			loop tab completions for position 2:
+				loop-value does not contain ".git"
+				add loop-value to {_tbf::*}
+			clear tab completions for position 2
+			set tab completions for position 2 to {_tbf::*}
 	if event-string contains "/dynsys":
 		{rank::%sender's uuid%} is "Admin"
 		tab arg-1 is "create":
@@ -20,7 +28,7 @@ on tab complete:
 			set tab completions for position 2 to "Admin", "Staff", "Donateur" and "Joueur"
 			stop
 	if event-string contains "/setrank":
-		{rank::%sender's uuid%} is "Admin"
+		sender is op
 		loop {proxy::p_list::*}:
 			add loop-value parsed as an offline player to {_l::*}
 		set tab completions for position 1 to {_l::*}
@@ -30,3 +38,22 @@ on tab complete:
 			loop-value parsed as an offline player is not sender
 			add loop-value parsed as an offline player to {_l::*}
 		set tab completions for position 1 to {_l::*}
+
+command /help:
+	trigger:
+		send " "
+		send "&6&lLISTE DES COMMANDES"
+		send " "
+		send "&6Général"
+		send "&e/help&f - &oAffiche la liste des commandes."
+		send "&e/proxy&f - &oConsulter l'état des serveurs."
+		send " "
+		send "&6Messages privés"
+		send "&e/msg <joueur> <message>&f - &oEnvoie d'un message privé."
+		send "&e/r <message>&f - &oRépond directement à la dernière personne qui vous a contacté."
+		send "&e/block <joueur>&f - &oPermet de bloquer/débloquer un joueur."
+		send " "
+		send "&6Social"
+		send "&e/friend&f - &oObtenir de l'aide concernant le système d'ami."
+		send "&e/party&f - &oObtenir de l'aide concernant le système de groupe."
+		
