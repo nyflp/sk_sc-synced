@@ -22,7 +22,6 @@ on tab complete:
 			loop {_sv::*}:
 				
 				loop-value does not contain "dev"
-				broadcast loop-value
 				add loop-value to {_l::*}
 			set tab completions for position 2 to {_l::*}
 			stop

@@ -276,7 +276,7 @@ function pteroCreate(profile: text, serverName: text, ownerId: number, allocId: 
 function copyFromTemplate(targetIdentifier: text, profile: text) :: text:
 	send "&6[COPY] Copie fichiers du template %{_profile}%..." to console
 	
-	set {_sourceShort} to {profiles::%{_profile}%::template_identifier}
+	set {_sourceShort} to {profiles::%{_profile}%::template}
 	
 	if {_sourceShort} is not set:
 		send "&c[COPY] Template introuvable pour profile %{_profile}%" to console
