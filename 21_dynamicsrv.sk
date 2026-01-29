@@ -10,7 +10,7 @@ import:
 	java.io.File
 
 options:
-	pteroFile: "plugins/Skript/scripts/sk_sc/20_ptero.yml"
+	pteroFile: "plugins/Skript/scripts/sk_sc-synced/20_ptero.yml"
 	yamlId: "ptero"
 
 on load:
