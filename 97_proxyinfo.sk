@@ -2,6 +2,7 @@ command /proxy:
 	trigger:
 		set {_tps::*} to tps
 		send redis message "ask_tps||%{id}%" to "skript"
+		clear {tps::srv::*}
 		wait 0.5 seconds
 		loop {tps::srv::*}:
 			add loop-value to {_av}
