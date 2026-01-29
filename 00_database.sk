@@ -1,0 +1,26 @@
+function sqlEscape(t: text) :: text:
+	set {_s} to {_t}
+	replace all "'" in {_s} with "''"
+	return {_s}
+
+function setGlobal(key: text, value: object):
+	set {_k} to sqlEscape({_key})
+	set {_v} to sqlEscape("%{_value}%")
+	execute "INSERT INTO `{@table}` (`g_key`, `g_value`) VALUES ('%{_k}%', '%{_v}%') ON DUPLICATE KEY UPDATE `g_value` = VALUES(`g_value`);" in {sql}
+
+function getGlobal(key: text) :: text:
+	set {_k} to sqlEscape({_key})
+	synchronously execute "SELECT `g_value` FROM `{@table}` WHERE `g_key` = '%{_k}%' LIMIT 1;" in {sql} and store result in {_res::*}
+	if {_res::g_value::1} is set:
+		return "%{_res::g_value::1}%"
+	return ""
+
+function delGlobal(key: text):
+	set {_k} to sqlEscape({_key})
+	execute "DELETE FROM `{@table}` WHERE `g_key` = '%{_k}%';" in {sql}
+
+on script load:
+	set {sql} to database of "mysql://192.168.1.27:3306/s1_var?user=u1_yfpSz6ZpwR&password=FSTu0!o1ezJP9YR2W6Lku%%40xr&useSSL=false"
+	execute "CREATE TABLE IF NOT EXISTS `{@table}` (`g_key` VARCHAR(128) NOT NULL, `g_value` LONGTEXT NOT NULL, `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (`g_key`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;" in {sql}
+	send "&aLa base de donnée est bien connectée" to console
+	setGlobal("plist.%{id}%", "%online player number%")

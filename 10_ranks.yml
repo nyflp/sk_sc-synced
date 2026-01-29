@@ -1,0 +1,21 @@
+groups:
+  - Admin
+  - Staff
+  - Donateur
+  - Joueur
+
+perms:
+  Admin:
+    - "skperm.admin"
+    - "skperm.staff"
+    - "skperm.donateur"
+    - "skperm.joueur"
+  Staff:
+    - "skperm.staff"
+    - "skperm.donateur"
+    - "skperm.joueur"
+  Donateur:
+    - "skperm.donateur"
+    - "skperm.joueur"
+  Joueur:
+    - "skperm.joueur"

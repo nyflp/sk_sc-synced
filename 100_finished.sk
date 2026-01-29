@@ -1,0 +1,23 @@
+on script load:
+	wait 5 ticks
+	if file "server_id.txt" exists:
+		set {_raw} to content of file "server_id.txt"
+		replace all new line with "" in {_raw}
+		
+		# Parser le JSON si format {"contents":"hub_01"}
+		if {_raw} contains "{""contents"":""":
+			set {_parts::*} to {_raw} split at """contents"":"""
+			if {_parts::2} is set:
+				set {_after} to {_parts::2}
+				set {_parts2::*} to {_after} split at """"
+				set {_myServerName} to {_parts2::1}
+		else:
+			# Format direct (texte brut)
+			set {_myServerName} to {_raw}
+		
+		send "&a[SYS] Je suis : %{_myServerName}%" to console
+		delete {proxy::p_list::*}
+		set {id} to {_myServerName}
+		send redis message "srv_started||%{id}%" to "skript"
+	else:
+		send "&c[SYS] Impossible de trouver mon nom (server_id.txt manquant)" to console

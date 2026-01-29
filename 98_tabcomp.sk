@@ -1,0 +1,32 @@
+on tab complete:
+	if event-string contains "/dynsys":
+		{rank::%sender's uuid%} is "Admin"
+		tab arg-1 is "create":
+			set tab completions for position 2 to "hub"
+			stop
+		else if tab arg-1 is "delete" or "start" or "kill" or "restart":
+			set {_svp} to getGlobal("server_list")
+			replace all " and " in {_svp} with ", "
+			set {_sv::*} to {_svp} split at ", "
+			loop {_sv::*}:
+				
+				loop-value does not contain "dev"
+				broadcast loop-value
+				add loop-value to {_l::*}
+			set tab completions for position 2 to {_l::*}
+			stop
+		else:
+			set tab completions for position 1 to "create", "stop", "restart", "kill" and "delete"
+			set tab completions for position 2 to "Admin", "Staff", "Donateur" and "Joueur"
+			stop
+	if event-string contains "/setrank":
+		{rank::%sender's uuid%} is "Admin"
+		loop {proxy::p_list::*}:
+			add loop-value parsed as an offline player to {_l::*}
+		set tab completions for position 1 to {_l::*}
+		set tab completions for position 2 to "Admin", "Staff", "Donateur" and "Joueur"
+	if event-string contains "/setrank":
+		loop {proxy::p_list::*}:
+			loop-value parsed as an offline player is not sender
+			add loop-value parsed as an offline player to {_l::*}
+		set tab completions for position 1 to {_l::*}

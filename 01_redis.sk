@@ -1,0 +1,33 @@
+on join:
+	wait 1 tick
+	send redis message "player_join||%player's uuid%" to "skript"
+on quit:
+	wait 1 tick
+	send redis message "player_quit||%player's uuid%" to "skript"
+
+on redis message:
+	set {_p::*} to redis message split by "||"
+	{_p::1} is "player_join":
+		add {_p::2} to {proxy::p_list::*}
+		setGlobal("plist.%{id}%", "%online player number%")
+	{_p::1} is "player_quit":
+		remove {_p::2} from {proxy::p_list::*}
+		setGlobal("plist.%{id}%", "%online player number%")
+	{_p::1} is "send_msg":
+		{_p::3} is online
+		send "&e⚝&7 [%team prefix of team of {_p::2}%%{_p::2}% &7» &bMoi&7] : &e&o%{_p::4}%" to {_p::3}
+	{_p::1} is "srv_started":
+		loop all players:
+			send redis message "player_online||%{_p::2}%||%loop-player's uuid%" to "skript"
+	{_p::1} is "player_online":
+		"%{id}%" is "%{_p::2}%"
+		add {_p::3} to {proxy::p_list::*}
+	{_p::1} is "ask_tps":
+		send redis message "give_tps||%{id}%||%tps%||%{_p::2}%" to "skript"
+	{_p::1} is "give_tps":
+		"%{id}%" is "%{_p::4}%"
+		set {tps::srv::%{_p::2}%} to {_p::3}
+	{_p::1} is "update_perm":
+		{_p::2} parsed as an offline player is online
+		setColor({_p::2} parsed as an offline player)
+		

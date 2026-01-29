@@ -1,0 +1,72 @@
+on script load:
+	load yaml "plugins/Skript/scripts/synced/09_ranks.yml" as "ranks"
+	clear {ranks::*}
+	set {_groups::*} to yaml list "groups" from "ranks"
+	loop {_groups::*}:
+		set {_perms::*} to yaml list "perms.%loop-value-1%" from "ranks"
+		add loop-value to {ranks::group::*}
+		loop {_perms::*}:
+			add loop-value-2 to {ranks::perms::%loop-value-1%::*}
+			
+	set team color of team named "a-admin" to white
+	set team prefix of team named "a-admin" to "&2(Admin) &f"
+	clear team suffix of team named "a-admin"
+	
+	set team color of team named "b-staff" to white
+	set team prefix of team named "b-staff" to "&a(Staff) &f"
+	clear team suffix of team named "b-staff"
+	
+	set team prefix of team named "y-donateur" to "&e⛃ "
+	set team color of team named "y-donateur" to yellow
+	clear team suffix of team named "y-donateur"
+	
+	set team color of team named "z-joueur" to light grey
+	set team prefix of team named "z-joueur" to "&7"
+	clear team suffix of team named "z-joueur"
+
+command /setrank [<text>] [<text>]:
+	permission: sys.setrank
+	permission message: &cVous n'avez pas la permission.
+	trigger:
+		arg-1 is not set:
+			send "&cSyntaxe: /setrank <Joueur> <Admin ; Staff ; Donateur ; Joueur>"
+			stop
+		set {_p} to arg-1 parsed as an offline player
+		if {_p} is not an offline player:
+			send "&cCe joueur n'existe pas en version premium."
+			stop
+		arg-2 is not "Admin", "Staff", "Donateur" or "Joueur":
+			send "&cSyntaxe: /setrank <Joueur> <Admin ; Staff ; Donateur ; Joueur>"
+			stop
+		setRank({_p}, arg-2)
+		send "&a%{_p}% est désormais &b%arg-2%&a."
+
+function setRank(p: player, rank: text):
+	setGlobal("rank.%{_p}'s uuid%", {_rank})
+	wait 5 tick
+	send redis message "update_perm||%{_p}'s uuid%" to "skript"
+
+function setColor(p: player):
+	set {_rank} to getGlobal("rank.%{_p}'s uuid%")
+	if {_rank} is "Admin":
+		set {_t} to team named "a-admin"
+	else if {_rank} is "Staff":
+		set {_t} to team named "b-staff"
+	else if {_rank} is "Donateur":
+		set {_t} to team named "y-donateur"
+	else if {_rank} is "Joueur":
+		set {_t} to team named "z-joueur"
+	remove "skperm.joueur" from {_p}'s perms
+	remove "skperm.donateur" from {_p}'s perms
+	remove "skperm.staff" from {_p}'s perms
+	remove "skperm.admin" from {_p}'s perms
+	loop {ranks::perms::%{_rank}%::*}:
+		add loop-value to {_p}'s perms
+	set {rank::%{_p}'s uuid%} to {_rank}
+	add {_p} to {_t}
+
+on connect:
+	if player's perms contains "skperm.joueur":
+		setRank(player, "Joueur")
+	setColor(player)
+		

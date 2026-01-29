@@ -1,0 +1,80 @@
+### --- /!\ Manque le système de report /!\ --- ###
+
+on disconnect:
+	delGlobal("corresp.%player's uuid%")
+
+command /msg [<text>] [<text>]:
+	trigger:
+		arg-1 is not set:
+			send "&cSyntaxe : /msg <joueur> <message>"
+			stop
+		set {_p} to arg-1 parsed as an offline player
+		if {_p} is not an offline player:
+			send "&c%arg-1% n'est pas un joueur premium."
+			stop
+		if {proxy::p_list::*} does not contain {_p}'s uuid:
+			send "&cCe joueur n'est pas en ligne."
+			stop
+		if {_p} is player:
+			send "&cVous ne pouvez pas vous envoyer des messages à vous-même."
+			stop
+		if arg-2 is not set:
+			send "&cSyntaxe : /msg <joueur> <message>"
+			stop
+		if getGlobal("block_rel.%player's uuid%.%{_p}'s uuid%") is "true":
+			send "&cVous avez bloqué ce joueur et vous ne pouvez donc plus lui envoyer de message. Tapez /block %{_p}% pour le débloquer."
+			stop
+		send "&e⚝&7 [&bMoi&7 » %team prefix of team of {_p}%%{_p}%&7] : &e&o%arg-2%" to player
+		if getGlobal("block_rel.%{_p}'s uuid%.%player's uuid%") is not "true":
+			send redis message "send_msg||%player%||%{_p}%||%arg-2%" to "skript"
+			setGlobal("corresp.%{_p}'s uuid%", player)
+
+command /r [<text>]:
+	trigger:
+		arg-1 is not set:
+			send "&cSyntaxe : /r <message>"
+			stop
+		getGlobal("corresp.%player's uuid%") is not set:
+			send "&cVous n'avez personne qui a répondre."
+			stop
+		set {_p} to getGlobal("corresp.%player's uuid%") parsed as an offline player
+		if {proxy::p_list::*} does not contain {_p}'s uuid:
+			send "&cVotre interlocuteur n'est plus en ligne."
+			stop
+		if getGlobal("block_rel.%player's uuid%.%{_p}'s uuid%") is "true":
+			send "&cVous avez bloqué ce joueur et vous ne pouvez donc plus lui envoyer de message. Tapez /block %{_p}% pour le débloquer."
+			stop
+		send "&e⚝ &7[&bMoi&7 » %team prefix of team of {_p}%%{_p}%&7] : &6&o%arg-1%" to player
+		if getGlobal("block_rel.%{_p}'s uuid%.%player's uuid%") is not "true":
+			send redis message "send_msg||%player%||%{_p}%||%arg-1%" to "skript"
+			setGlobal("corresp.%{_p}'s uuid%", player)
+
+
+function guiOpenBlock(p: player):
+	stop
+
+command /block [<text>]:
+	trigger:
+		if arg-1 is not set:
+			send "&cSyntaxe : /block <joueur>"
+			stop
+		set {_p} to arg-1 parsed as an offline player
+		if {_p} is not an offline player:
+			send "&c%arg-1% n'est pas un joueur premium."
+			stop
+		arg-1 is player:
+			send "&cVous ne pouvez pas vous bloquer vous-même."
+			stop
+		if getGlobal("block_rel.%player's uuid%.%{_p}'s uuid%") is not "true":
+			setGlobal("block_rel.%player's uuid%.%{_p}'s uuid%", "true")
+			send "&a%{_p}% est désormais bloqué."
+			send "&f&oIl ne pourra toujours essayer de vous envoyer des messages, mais vous ne les recevrez plus. Pour débloquer quelqu'un, vous pouvez effectuer la même commande &b&o/block&f&o sur un joueur déjà bloqué. Vous pouvez consulter la liste des joueurs que vous avez bloqué sur votre profil avec &b&o/me&f&o."
+		else:
+			delGlobal("block_rel.%player's uuid%.%{_p}'s uuid%")
+			send "&c&lATTENTION. &aVous aviez déjà bloqué %{_p}%, vous venez donc de le débloquer."
+			send "&f&oPour le rebloquer, vous pouvez effectuer la même commande &b&o/block&f&o. Vous pouvez consulter la liste des joueurs que vous avez bloqué sur votre profil avec &b&o/me&f&o."
+
+on chat:
+	cancel event
+	loop all players:
+		send "%team prefix of team of player%%player%&7 : &f%message%" to loop-player

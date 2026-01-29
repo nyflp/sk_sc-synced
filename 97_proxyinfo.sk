@@ -1,0 +1,28 @@
+command /proxy:
+	trigger:
+		set {_tps::*} to tps
+		send redis message "ask_tps||%{id}%" to "skript"
+		wait 0.5 seconds
+		loop {tps::srv::*}:
+			add loop-value to {_av}
+			set {_lp} to "%loop-value%"
+			replace all " and" in {_lp} with ","
+			set {_avg_i::*} to {_lp} split by ", "
+			add 1 to {_qg}
+			add {_avg_i::1} parsed as a number to {_avg1}
+			add {_avg_i::2} parsed as a number to {_avg2}
+			add {_avg_i::3} parsed as a number to {_avg3}
+			loop-index contains "hub":
+				add 1 to {_qh}
+				set {_pl} to getGlobal("plist.%loop-index%")
+				set {_lmsg::%{_qh}%} to "&a❘        &7""%loop-index%"" : &b%{_avg_i::1}%&f, &b%{_avg_i::2}%&f, &b%{_avg_i::3}%&f. &e[%{_pl}% joueur(s)]"
+				add {_pl} parsed as a number to {_plh}
+				add {_avg_i::1} parsed as a number to {_avg_h1}
+				add {_avg_i::2} parsed as a number to {_avg_h2}
+				add {_avg_i::3} parsed as a number to {_avg_h3}
+		send " "
+		send "&a❚  &a&lPROXY&f : &b%{_avg1}/{_qg}%&f, &b%{_avg2}/{_qg}%&f, &b%{_avg3}/{_qg}%&f. &e[%size of {proxy::p_list::*}% joueur(s)]"
+		send "&a❙    &fHubs : &b%{_avg_h1}/{_qh}%&f, &b%{_avg_h2}/{_qh}%&f, &b%{_avg_h3}/{_qh}%&f. &e[%{_plh}% joueur(s)]"
+		loop {_lmsg::*}:
+			send loop-value
+		send " "
