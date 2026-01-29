@@ -26,6 +26,7 @@ on load:
 	set {profiles::hub::disk} to yaml value "profiles.hub.disk" from {@yamlId}
 	set {profiles::hub::cpu} to yaml value "profiles.hub.cpu" from {@yamlId}
 	set {profiles::hub::io} to yaml value "profiles.hub.io" from {@yamlId}
+	set {profiles::hub::startup} to yaml value "profiles.hub.startup" from {@yamlId}
 	
 	set {ptero::node_id} to 1
 	set {ptero::paper_egg_id} to 3
@@ -239,7 +240,7 @@ function pteroCreate(profile: text, serverName: text, ownerId: number, allocId: 
 	set {_io} to {profiles::%{_profile}%::io}
 
 	set {_docker} to "ghcr.io/pterodactyl/yolks:java_21"
-	set {_startup} to "java -Xms128M -Xmx{{SERVER_MEMORY}}M -jar server.jar"
+	set {_startup} to {profiles::%{_profile}%::startup}
 
 	set {_json} to "{"
 	set {_json} to "%{_json}%""name"":""%{_serverName}%"","
