@@ -1,3 +1,6 @@
+on unknown command:
+	set component unknown command message to text component from "&cCette commande n'existe pas."
+
 on tab complete:
 	if event-string contains "/sk" or "/skript":
 		player is op

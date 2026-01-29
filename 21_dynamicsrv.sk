@@ -29,7 +29,6 @@ on load:
 	
 	set {ptero::node_id} to 1
 	set {ptero::paper_egg_id} to 3
-	set {ptero::hub_template_identifier} to "82311a18"
 	
 	set {ptero::servers::hub_dev::id} to 2
 	set {ptero::servers::hub_dev::identifier} to "0c09d21d"
@@ -274,10 +273,15 @@ function pteroCreate(profile: text, serverName: text, ownerId: number, allocId: 
 # ============================================================
 # COPY FROM TEMPLATE
 # ============================================================
-function copyFromTemplate(targetIdentifier: text) :: text:
-	send "&6[COPY] Copie fichiers..." to console
+function copyFromTemplate(targetIdentifier: text, profile: text) :: text:
+	send "&6[COPY] Copie fichiers du template %{_profile}%..." to console
 	
-	set {_sourceShort} to {ptero::hub_template_identifier}
+	set {_sourceShort} to {profiles::%{_profile}%::template_identifier}
+	
+	if {_sourceShort} is not set:
+		send "&c[COPY] Template introuvable pour profile %{_profile}%" to console
+		return "ERROR: No template for profile"
+	
 	set {_sourceUUID} to getServerUUID({_sourceShort})
 	set {_targetUUID} to getServerUUID({_targetIdentifier})
 	
@@ -311,6 +315,7 @@ function copyFromTemplate(targetIdentifier: text) :: text:
 	
 	send "&c❌ Erreur copie: %{_statusCode}%" to console
 	return "ERROR: API %{_statusCode}%"
+
 
 # ============================================================
 # POWER & DELETE
@@ -374,7 +379,7 @@ function dynSysCall(action: text, arg: text):
 			wait 0.5 seconds
 		
 		wait 1 second
-		set {_copyRes} to copyFromTemplate({_identifier})
+		set {_copyRes} to copyFromTemplate({_identifier}, {_profile})
 		
 		if {_copyRes} contains "SUCCESS":
 			send "&a[WRITE] Création server_id.txt..." to console
