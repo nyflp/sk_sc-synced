@@ -34,7 +34,7 @@ on tab complete:
 		loop {proxy::p_list::*}:
 			add loop-value parsed as an offline player to {_l::*}
 		set tab completions for position 1 to {_l::*}
-		set tab completions for position 2 to "Admin", "Staff", "Donateur" and "Joueur"
+		set tab completions for position 2 to "Admin", "Staff", "FDonateur", "Donateur", "FJoueur" and "Joueur"
 	if event-string contains "/setrank":
 		loop {proxy::p_list::*}:
 			loop-value parsed as an offline player is not sender

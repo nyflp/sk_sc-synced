@@ -14,8 +14,19 @@ perms:
     - "skperm.staff"
     - "skperm.donateur"
     - "skperm.joueur"
+  Friend:
+    - "skperm.friend"
+    - "skperm.donateur"
+    - "skperm.joueur"
   Donateur:
     - "skperm.donateur"
     - "skperm.joueur"
   Joueur:
+    - "skperm.joueur"
+  FDonateur:
+    - "skperm.friend"
+    - "skperm.donateur"
+    - "skperm.joueur"
+  FJoueur:
+    - "skperm.friend"
     - "skperm.joueur"

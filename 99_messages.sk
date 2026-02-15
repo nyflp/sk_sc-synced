@@ -76,5 +76,8 @@ command /block [<text>]:
 
 on chat:
 	cancel event
+	set {_s} to team suffix of team of player
+	{_s} is not set:
+		set {_s} to ""
 	loop all players:
-		send "%team prefix of team of player%%player%&7 : &f%message%" to loop-player
+		send "%team prefix of team of player%%player%%{_s}%&7 : &f%message%" to loop-player

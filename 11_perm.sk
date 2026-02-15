@@ -16,9 +16,17 @@ on script load:
 	set team prefix of team named "b-staff" to "&a(Staff) &f"
 	clear team suffix of team named "b-staff"
 	
-	set team prefix of team named "y-donateur" to "&e⛃ "
-	set team color of team named "y-donateur" to yellow
-	clear team suffix of team named "y-donateur"
+	set team color of team named "v-don-friend" to yellow
+	set team prefix of team named "v-don-friend" to "&e⛃ "
+	set team suffix of team named "v-don-friend" to "&d*"
+	
+	set team prefix of team named "w-donateur" to "&e⛃ "
+	set team color of team named "w-donateur" to yellow
+	clear team suffix of team named "w-donateur"
+	
+	set team color of team named "y-play-friend" to light grey
+	set team prefix of team named "y-play-friend" to "&7"
+	set team suffix of team named "y-play-friend" to "&d*"
 	
 	set team color of team named "z-joueur" to light grey
 	set team prefix of team named "z-joueur" to "&7"
@@ -35,8 +43,8 @@ command /setrank [<text>] [<text>]:
 		if {_p} is not an offline player:
 			send "&cCe joueur n'existe pas en version premium."
 			stop
-		arg-2 is not "Admin", "Staff", "Donateur" or "Joueur":
-			send "&cSyntaxe: /setrank <Joueur> <Admin ; Staff ; Donateur ; Joueur>"
+		arg-2 is not "Admin", "Staff", "FDonateur", "Donateur", "FJoueur" or "Joueur":
+			send "&cSyntaxe: /setrank <Joueur> <Admin ; Staff ; [F]Donateur ; [F]Joueur>"
 			stop
 		setRank({_p}, arg-2)
 		send "&a%{_p}% est désormais &b%arg-2%&a."
@@ -53,9 +61,15 @@ function setColor(p: player):
 	else if {_rank} is "Staff":
 		remove {_p}'s perms from {_p}'s perms
 		set {_t} to team named "b-staff"
+	else if {_rank} is "FDonateur":
+		remove {_p}'s perms from {_p}'s perms
+		set {_t} to team named "v-don-friend"
+	else if {_rank} is "FJoueur":
+		remove {_p}'s perms from {_p}'s perms
+		set {_t} to team named "y-play-friend"
 	else if {_rank} is "Donateur":
 		remove {_p}'s perms from {_p}'s perms
-		set {_t} to team named "y-donateur"
+		set {_t} to team named "w-donateur"
 	else if {_rank} is "Joueur":
 		remove {_p}'s perms from {_p}'s perms
 		set {_t} to team named "z-joueur"
